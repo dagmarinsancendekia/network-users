@@ -3,6 +3,7 @@ import subprocess
 import ipaddress
 import socket
 import re
+import concurrent.futures
 
 app = Flask(__name__)
 
@@ -22,10 +23,20 @@ def get_subnet(ip):
     """Get the subnet from IP address, assuming /24."""
     return ipaddress.ip_network(ip + '/24', strict=False)
 
+def ping_ip(ip):
+    """Ping a single IP address."""
+    import platform
+    param = '-n' if platform.system().lower() == 'windows' else '-c'
+    timeout_param = '-w' if platform.system().lower() == 'windows' else '-W'
+    result = subprocess.run(['ping', param, '1', timeout_param, '1', str(ip)], capture_output=True)
+    return result.returncode == 0
+
 def ping_sweep(subnet):
-    """Perform ping sweep on the subnet to populate ARP table."""
-    for ip in subnet.hosts():
-        subprocess.run(['ping', '-n', '1', '-w', '100', str(ip)], capture_output=True)
+    """Perform parallel ping sweep on the subnet to populate ARP table."""
+    with concurrent.futures.ThreadPoolExecutor(max_workers=50) as executor:
+        futures = {executor.submit(ping_ip, ip): ip for ip in subnet.hosts()}
+        for future in concurrent.futures.as_completed(futures):
+            pass  # Just to wait for completion
 
 def get_arp_table():
     """Retrieve the ARP table and parse devices."""
