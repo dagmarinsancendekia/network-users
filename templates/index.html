@@ -19,6 +19,7 @@
             <tr>
                 <th>IP Address</th>
                 <th>MAC Address</th>
+                <th>Manufacturer</th>
             </tr>
         </thead>
         <tbody>
@@ -26,6 +27,7 @@
             <tr>
                 <td>{{ device.ip }}</td>
                 <td>{{ device.mac }}</td>
+                <td>{{ device.vendor }}</td>
             </tr>
             {% endfor %}
         </tbody>

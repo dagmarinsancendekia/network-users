@@ -14,9 +14,10 @@
 
 ## Testing Steps
 - [x] Run Flask app locally
-- [ ] Access web interface in browser
-- [ ] Verify network scanning detects devices on wireless network
-- [ ] Check display of IP and MAC addresses
-- [ ] Test on different network conditions (if possible)
-- [ ] Ensure no errors in console/logs
+- [x] Access web interface in browser
+- [x] Verify network scanning detects devices on wireless network
+- [x] Check display of IP and MAC addresses
+- [x] Test on different network conditions (if possible)
+- [x] Ensure no errors in console/logs
 - [ ] Verify app handles no devices found scenario
+- [x] Create run_app.bat for easy app startup on Windows

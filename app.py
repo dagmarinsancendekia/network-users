@@ -3,7 +3,9 @@ import subprocess
 import ipaddress
 import socket
 import re
+from mac_vendor_lookup import MacLookup
 import concurrent.futures
+from mac_vendor_lookup import MacLookup
 
 app = Flask(__name__)
 
@@ -43,12 +45,18 @@ def get_arp_table():
     result = subprocess.run(['arp', '-a'], capture_output=True, text=True)
     lines = result.stdout.split('\n')
     devices = []
+    mac_lookup = MacLookup()
+    mac_lookup.update_vendors()  # Update vendor database
     for line in lines:
         parts = re.split(r'\s+', line.strip())
         if len(parts) >= 3 and parts[0] != 'Interface:' and '.' in parts[0]:
             ip = parts[0]
             mac = parts[1]
-            devices.append({'ip': ip, 'mac': mac})
+            try:
+                vendor = mac_lookup.lookup(mac)
+            except Exception:
+                vendor = "Unknown"
+            devices.append({'ip': ip, 'mac': mac, 'vendor': vendor})
     return devices
 
 @app.route('/')

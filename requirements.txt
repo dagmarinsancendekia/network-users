@@ -1,1 +1,2 @@
 Flask==2.3.3
+mac-vendor-lookup==0.1.12
